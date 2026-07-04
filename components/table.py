@@ -37,6 +37,21 @@ DATE_COMPARATOR_JS = JsCode(
 
 DISPLAY_COLUMNS = [c for c in ACCOUNTS_HEADERS if c not in ("Pass1", "Pass2")]
 
+COLUMN_WIDTHS = {
+    "ID": 110,
+    "Email": 240,
+    "DOB": 120,
+    "Direccion": 260,
+    "Nombre": 140,
+    "Apellido": 140,
+    "Telefono": 160,
+    "Usuario": 140,
+    "Comentarios": 220,
+    "Fecha": 120,
+    "Hora": 100,
+    "Empleado": 160,
+}
+
 
 def render_accounts_table(df: pd.DataFrame, key: str = "accounts_grid") -> dict:
     """Renderiza la tabla principal de cuentas y devuelve el estado de selección/edición.
@@ -56,11 +71,15 @@ def render_accounts_table(df: pd.DataFrame, key: str = "accounts_grid") -> dict:
     display_df["Comentarios"] = display_df["Comentarios"].apply(lambda x: truncate(x, 60))
 
     builder = GridOptionsBuilder.from_dataframe(display_df)
-    builder.configure_default_column(resizable=True, sortable=True, filter=True, editable=False, wrapText=False)
+    builder.configure_default_column(
+        resizable=True, sortable=True, filter=True, editable=False, wrapText=False, minWidth=110
+    )
     builder.configure_selection(selection_mode="single", use_checkbox=False)
     builder.configure_pagination(enabled=True, paginationAutoPageSize=False, paginationPageSize=12)
     builder.configure_column("_edit_trigger", hide=True)
-    builder.configure_column("ID", pinned="left", width=100)
+    for column, width in COLUMN_WIDTHS.items():
+        pinned = "left" if column == "ID" else None
+        builder.configure_column(column, width=width, minWidth=width, pinned=pinned)
     builder.configure_column("Fecha", comparator=DATE_COMPARATOR_JS)
     builder.configure_column("DOB", comparator=DATE_COMPARATOR_JS)
     builder.configure_grid_options(onRowDoubleClicked=DOUBLE_CLICK_JS, domLayout="normal")
@@ -72,7 +91,7 @@ def render_accounts_table(df: pd.DataFrame, key: str = "accounts_grid") -> dict:
         gridOptions=grid_options,
         update_mode=GridUpdateMode.SELECTION_CHANGED | GridUpdateMode.MODEL_CHANGED,
         data_return_mode=DataReturnMode.AS_INPUT,
-        columns_auto_size_mode=ColumnsAutoSizeMode.FIT_CONTENTS,
+        columns_auto_size_mode=ColumnsAutoSizeMode.NO_AUTOSIZE,
         fit_columns_on_grid_load=False,
         theme="alpine",
         height=430,
