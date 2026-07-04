@@ -2,9 +2,15 @@
 
 import re
 import uuid
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 from utils.constants import DATE_FORMAT, TIME_FORMAT
+
+# Formatos aceptados al leer fechas provenientes de Google Sheets, además del
+# formato propio de la app. Google Sheets reformatea el texto escrito por un
+# humano según el formato de la celda/columna, así que aceptamos variantes
+# comunes para que las filas pegadas manualmente también se detecten.
+_KNOWN_DATE_FORMATS = [DATE_FORMAT, "%d/%m/%Y", "%Y-%m-%d", "%m/%d/%Y", "%d-%m-%Y", "%Y/%m/%d", "%d.%m.%Y"]
 
 
 def generate_uuid() -> str:
@@ -49,12 +55,36 @@ def is_valid_dob(dob_str: str) -> bool:
         return False
 
 
-def parse_date_safe(value: str, fmt: str = DATE_FORMAT):
-    """Intenta parsear una fecha, devuelve None si falla."""
-    try:
-        return datetime.strptime(value, fmt).date()
-    except (ValueError, TypeError):
+def parse_date_safe(value, fmt: str = DATE_FORMAT):
+    """Intenta parsear una fecha proveniente de Sheets, probando varios formatos.
+
+    Acepta texto en el formato propio de la app, variantes comunes (ISO,
+    MM/DD/YYYY, etc.) que Google Sheets puede aplicar al pegar datos, objetos
+    date/datetime, y números de serie de fecha de Sheets/Excel.
+    """
+    if value is None or value == "":
         return None
+    if isinstance(value, datetime):
+        return value.date()
+    if isinstance(value, date):
+        return value
+    if isinstance(value, (int, float)):
+        try:
+            return (datetime(1899, 12, 30) + timedelta(days=float(value))).date()
+        except (OverflowError, ValueError, OSError):
+            return None
+
+    text = str(value).strip()
+    if not text:
+        return None
+
+    candidates = [fmt] + [f for f in _KNOWN_DATE_FORMATS if f != fmt]
+    for candidate in candidates:
+        try:
+            return datetime.strptime(text, candidate).date()
+        except ValueError:
+            continue
+    return None
 
 
 def truncate(text: str, length: int = 40) -> str:
