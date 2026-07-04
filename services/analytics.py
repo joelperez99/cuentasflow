@@ -91,5 +91,5 @@ class AnalyticsService:
         """Devuelve los últimos N registros ordenados por fecha/hora descendente."""
         if self.is_empty:
             return self._df
-        sorted_df = self._df.sort_values(["Fecha", "Hora"], ascending=False)
+        sorted_df = self._df.sort_values(["_fecha", "Hora"], ascending=False)
         return sorted_df.drop(columns=["_fecha"], errors="ignore").head(n)

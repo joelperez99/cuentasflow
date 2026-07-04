@@ -36,7 +36,7 @@ def account_modal(account_service: AccountService, empleado: str, existing: dict
 
     with col_left:
         email = st.text_input("Email *", value=data.get("email") or data.get("Email", ""), placeholder="nombre@dominio.com")
-        dob = st.text_input("Fecha de nacimiento (YYYY-MM-DD) *", value=data.get("dob") or data.get("DOB", ""), placeholder="1990-05-14")
+        dob = st.text_input("Fecha de nacimiento (DD/MM/AAAA) *", value=data.get("dob") or data.get("DOB", ""), placeholder="14/05/1990")
         pass1 = st.text_input("Contraseña 1 *", value=data.get("pass1") or data.get("Pass1", ""), type="password")
         pass2 = st.text_input("Contraseña 2", value=data.get("pass2") or data.get("Pass2", ""), type="password")
         direccion = st.text_input("Dirección", value=data.get("direccion") or data.get("Direccion", ""), placeholder="Calle 123, Ciudad")
@@ -62,7 +62,7 @@ def account_modal(account_service: AccountService, empleado: str, existing: dict
             if not is_valid_email(email):
                 errors.append("El email no tiene un formato válido.")
             if not is_valid_dob(dob):
-                errors.append("La fecha de nacimiento debe tener formato YYYY-MM-DD y ser una fecha pasada.")
+                errors.append("La fecha de nacimiento debe tener formato DD/MM/AAAA y ser una fecha pasada.")
             if not pass1:
                 errors.append("La contraseña 1 es obligatoria.")
             if not nombre.strip():

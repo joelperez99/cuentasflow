@@ -47,9 +47,9 @@ SESSION_PAGE_KEY = "current_page"
 # --- Cache ---
 CACHE_TTL_SECONDS = 30
 
-DATE_FORMAT = "%Y-%m-%d"
+DATE_FORMAT = "%d/%m/%Y"
 TIME_FORMAT = "%H:%M:%S"
-DOB_FORMAT = "%Y-%m-%d"
+DOB_FORMAT = "%d/%m/%Y"
 
 DEFAULT_PROJECTS = ["Proyecto General"]
 DEFAULT_EMPLOYEES = []

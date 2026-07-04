@@ -21,6 +21,20 @@ DOUBLE_CLICK_JS = JsCode(
     """
 )
 
+DATE_COMPARATOR_JS = JsCode(
+    """
+    function(dateA, dateB) {
+        function toSortable(value) {
+            if (!value) return 0;
+            const parts = value.split('/');
+            if (parts.length !== 3) return 0;
+            return parseInt(parts[2] + parts[1].padStart(2, '0') + parts[0].padStart(2, '0'), 10);
+        }
+        return toSortable(dateA) - toSortable(dateB);
+    }
+    """
+)
+
 DISPLAY_COLUMNS = [c for c in ACCOUNTS_HEADERS if c not in ("Pass1", "Pass2")]
 
 
@@ -47,6 +61,8 @@ def render_accounts_table(df: pd.DataFrame, key: str = "accounts_grid") -> dict:
     builder.configure_pagination(enabled=True, paginationAutoPageSize=False, paginationPageSize=12)
     builder.configure_column("_edit_trigger", hide=True)
     builder.configure_column("ID", pinned="left", width=100)
+    builder.configure_column("Fecha", comparator=DATE_COMPARATOR_JS)
+    builder.configure_column("DOB", comparator=DATE_COMPARATOR_JS)
     builder.configure_grid_options(onRowDoubleClicked=DOUBLE_CLICK_JS, domLayout="normal")
 
     grid_options = builder.build()

@@ -107,7 +107,7 @@ class GoogleSheetsService:
         """Agrega una fila nueva al final de la hoja."""
         worksheet = self._get_or_create_worksheet(sheet_name, headers)
         values = [row.get(h, "") for h in headers]
-        self._with_retry(worksheet.append_row, values, value_input_option="USER_ENTERED")
+        self._with_retry(worksheet.append_row, values, value_input_option="RAW")
 
     def update_row(self, sheet_name: str, headers: list[str], id_column: str, id_value: str, row: dict) -> bool:
         """Actualiza la fila cuyo id_column coincide con id_value."""
@@ -130,7 +130,7 @@ class GoogleSheetsService:
             worksheet.update,
             f"A{row_number}:{last_cell}",
             [values],
-            value_input_option="USER_ENTERED",
+            value_input_option="RAW",
         )
         return True
 
