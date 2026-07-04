@@ -101,7 +101,7 @@ def render_accounts_table(df: pd.DataFrame, key: str = "accounts_grid") -> dict:
     return {"selected": selected, "edit_triggered_id": edit_triggered_id}
 
 
-def export_buttons(df: pd.DataFrame) -> None:
+def export_buttons(df: pd.DataFrame, key: str = "export") -> None:
     """Renderiza botones de exportación a Excel y CSV."""
     export_df = df.drop(columns=["_edit_trigger"], errors="ignore")
     col_csv, col_xlsx = st.columns(2)
@@ -112,6 +112,7 @@ def export_buttons(df: pd.DataFrame) -> None:
             file_name="cuentas.csv",
             mime="text/csv",
             use_container_width=True,
+            key=f"{key}_csv",
         )
     with col_xlsx:
         buffer = BytesIO()
@@ -123,4 +124,5 @@ def export_buttons(df: pd.DataFrame) -> None:
             file_name="cuentas.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             use_container_width=True,
+            key=f"{key}_xlsx",
         )

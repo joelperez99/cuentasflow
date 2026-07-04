@@ -66,7 +66,7 @@ def render(account_service: AccountService) -> None:
         render_accounts_table(day_df, key="historial_calendar_grid")
         if not day_df.empty:
             st.markdown("<div style='height:0.8rem;'></div>", unsafe_allow_html=True)
-            export_buttons(day_df)
+            export_buttons(day_df, key="export_calendario")
 
     with tab_tabla:
         col_emp, col_search = st.columns([1.2, 2])
@@ -82,4 +82,4 @@ def render(account_service: AccountService) -> None:
         render_accounts_table(filtered, key="historial_tabla_grid")
         if not filtered.empty:
             st.markdown("<div style='height:0.8rem;'></div>", unsafe_allow_html=True)
-            export_buttons(filtered)
+            export_buttons(filtered, key="export_tabla")
