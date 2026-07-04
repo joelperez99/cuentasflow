@@ -3,6 +3,7 @@
 import streamlit as st
 
 from components.calendar_view import render_month_calendar
+from components.detail_view import account_detail_modal
 from components.table import export_buttons, render_accounts_table
 from services.accounts import AccountService
 from utils.helpers import parse_date_safe
@@ -45,6 +46,7 @@ def render(account_service: AccountService) -> None:
         return
 
     tab_calendario, tab_tabla = st.tabs(["📅 Calendario", "📋 Tabla"])
+    view_id = None
 
     with tab_calendario:
         col_cal, col_filters = st.columns([1.3, 1])
@@ -63,7 +65,8 @@ def render(account_service: AccountService) -> None:
         st.markdown(
             f"**{len(day_df)}** cuenta(s) creada(s) el **{selected_date.strftime('%d/%m/%Y')}**."
         )
-        render_accounts_table(day_df, key="historial_calendar_grid")
+        cal_result = render_accounts_table(day_df, key="historial_calendar_grid")
+        view_id = view_id or cal_result["view_triggered_id"]
         if not day_df.empty:
             st.markdown("<div style='height:0.8rem;'></div>", unsafe_allow_html=True)
             export_buttons(day_df, key="export_calendario")
@@ -79,7 +82,13 @@ def render(account_service: AccountService) -> None:
 
         filtered = _apply_filters(df, empleado_filtro_tabla, busqueda_tabla)
         st.markdown(f"**{len(filtered)}** registro(s) encontrados en total.")
-        render_accounts_table(filtered, key="historial_tabla_grid")
+        tabla_result = render_accounts_table(filtered, key="historial_tabla_grid")
+        view_id = view_id or tabla_result["view_triggered_id"]
         if not filtered.empty:
             st.markdown("<div style='height:0.8rem;'></div>", unsafe_allow_html=True)
             export_buttons(filtered, key="export_tabla")
+
+    if view_id:
+        matches = df[df["ID"].astype(str) == str(view_id)]
+        if not matches.empty:
+            account_detail_modal(matches.iloc[0].to_dict())

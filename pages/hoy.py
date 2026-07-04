@@ -5,6 +5,7 @@ from datetime import datetime
 import streamlit as st
 
 from components.cards import info_banner, mini_card
+from components.detail_view import account_detail_modal
 from components.dialogs import confirm_delete_dialog
 from components.modal import account_modal
 from components.navbar import page_header
@@ -51,6 +52,7 @@ def render(account_service: AccountService) -> None:
     result = render_accounts_table(df, key="hoy_grid")
     selected = result["selected"]
     edit_id = result["edit_triggered_id"]
+    view_id = result["view_triggered_id"]
 
     action_cols = st.columns(4)
     with action_cols[0]:
@@ -80,6 +82,11 @@ def render(account_service: AccountService) -> None:
 
     if st.session_state.get("show_account_modal"):
         account_modal(account_service, empleado, existing=st.session_state.get("edit_account_data"))
+
+    if view_id:
+        matches = df[df["ID"].astype(str) == str(view_id)]
+        if not matches.empty:
+            account_detail_modal(matches.iloc[0].to_dict())
 
     if st.session_state.get("confirm_delete_id"):
         acc_id = st.session_state["confirm_delete_id"]
