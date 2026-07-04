@@ -88,6 +88,8 @@ def main() -> None:
     auth_service = AuthService(sheets_service)
     account_service = AccountService(sheets_service)
 
+    auth_service.restore_session()
+
     if not AuthService.is_authenticated():
         render_login(auth_service)
     else:

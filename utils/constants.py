@@ -43,6 +43,8 @@ COLOR_DANGER_HOVER = "#DC2626"
 # --- Sesión ---
 SESSION_USER_KEY = "auth_user"
 SESSION_PAGE_KEY = "current_page"
+SESSION_USER_PARAM = "u"
+SESSION_TOKEN_PARAM = "t"
 
 # --- Cache ---
 CACHE_TTL_SECONDS = 30
