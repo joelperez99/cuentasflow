@@ -45,7 +45,9 @@ def inject_global_styles() -> None:
         .block-container {{
             padding-top: 2rem;
             padding-bottom: 3rem;
-            max-width: 1200px;
+            padding-left: 2.5rem;
+            padding-right: 2.5rem;
+            max-width: 100%;
         }}
 
         h1, h2, h3, h4 {{
