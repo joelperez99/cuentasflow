@@ -52,23 +52,23 @@ def render(account_service: AccountService) -> None:
     result = render_accounts_table(df, key="hoy_grid")
     selected = result["selected"]
     edit_id = result["edit_triggered_id"]
-    view_id = result["view_triggered_id"]
 
     action_cols = st.columns(4)
     with action_cols[0]:
+        if st.button("👁️ Ver detalle", use_container_width=True, disabled=selected is None):
+            st.session_state["view_account_id"] = selected["ID"] if selected else None
+    with action_cols[1]:
         if st.button("✏️ Editar seleccionada", use_container_width=True, disabled=selected is None):
             st.session_state["edit_account_data"] = selected
             st.session_state["show_account_modal"] = True
-    with action_cols[1]:
+    with action_cols[2]:
         if st.button("📄 Duplicar seleccionada", use_container_width=True, disabled=selected is None):
             account_service.duplicate_account(selected["ID"], empleado)
             st.session_state["toast_message"] = "Cuenta duplicada correctamente."
             st.rerun()
-    with action_cols[2]:
+    with action_cols[3]:
         if st.button("🗑️ Eliminar seleccionada", use_container_width=True, disabled=selected is None):
             st.session_state["confirm_delete_id"] = selected["ID"] if selected else None
-    with action_cols[3]:
-        pass
 
     if not df.empty:
         st.markdown("<div style='height:0.8rem;'></div>", unsafe_allow_html=True)
@@ -83,10 +83,13 @@ def render(account_service: AccountService) -> None:
     if st.session_state.get("show_account_modal"):
         account_modal(account_service, empleado, existing=st.session_state.get("edit_account_data"))
 
+    view_id = st.session_state.get("view_account_id")
     if view_id:
         matches = df[df["ID"].astype(str) == str(view_id)]
         if not matches.empty:
             account_detail_modal(matches.iloc[0].to_dict())
+        else:
+            st.session_state["view_account_id"] = None
 
     if st.session_state.get("confirm_delete_id"):
         acc_id = st.session_state["confirm_delete_id"]

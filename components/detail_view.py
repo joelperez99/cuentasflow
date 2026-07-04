@@ -20,7 +20,7 @@ def _field(label: str, value) -> None:
 
 
 @st.dialog("Detalle de la cuenta")
-def account_detail_modal(row: dict) -> None:
+def account_detail_modal(row: dict, session_key: str = "view_account_id") -> None:
     """Muestra todos los campos de una cuenta de forma clara, en un popup centrado."""
     nombre_completo = f"{row.get('Nombre', '')} {row.get('Apellido', '')}".strip()
     st.markdown(f"### {nombre_completo or 'Cuenta sin nombre'}")
@@ -45,4 +45,5 @@ def account_detail_modal(row: dict) -> None:
     _field("Comentarios", row.get("Comentarios"))
 
     if st.button("Cerrar", type="primary", use_container_width=True):
+        st.session_state[session_key] = None
         st.rerun()

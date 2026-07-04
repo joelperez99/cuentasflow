@@ -46,7 +46,6 @@ def render(account_service: AccountService) -> None:
         return
 
     tab_calendario, tab_tabla = st.tabs(["📅 Calendario", "📋 Tabla"])
-    view_id = None
 
     with tab_calendario:
         col_cal, col_filters = st.columns([1.3, 1])
@@ -66,10 +65,22 @@ def render(account_service: AccountService) -> None:
             f"**{len(day_df)}** cuenta(s) creada(s) el **{selected_date.strftime('%d/%m/%Y')}**."
         )
         cal_result = render_accounts_table(day_df, key="historial_calendar_grid")
-        view_id = view_id or cal_result["view_triggered_id"]
+        cal_selected = cal_result["selected"]
+        if st.button(
+            "👁️ Ver detalle", disabled=cal_selected is None, key="ver_detalle_calendario"
+        ):
+            st.session_state["view_account_id_cal"] = cal_selected["ID"] if cal_selected else None
         if not day_df.empty:
             st.markdown("<div style='height:0.8rem;'></div>", unsafe_allow_html=True)
             export_buttons(day_df, key="export_calendario")
+
+    view_id_cal = st.session_state.get("view_account_id_cal")
+    if view_id_cal:
+        matches = df[df["ID"].astype(str) == str(view_id_cal)]
+        if not matches.empty:
+            account_detail_modal(matches.iloc[0].to_dict(), session_key="view_account_id_cal")
+        else:
+            st.session_state["view_account_id_cal"] = None
 
     with tab_tabla:
         col_emp, col_search = st.columns([1.2, 2])
@@ -83,12 +94,19 @@ def render(account_service: AccountService) -> None:
         filtered = _apply_filters(df, empleado_filtro_tabla, busqueda_tabla)
         st.markdown(f"**{len(filtered)}** registro(s) encontrados en total.")
         tabla_result = render_accounts_table(filtered, key="historial_tabla_grid")
-        view_id = view_id or tabla_result["view_triggered_id"]
+        tabla_selected = tabla_result["selected"]
+        if st.button(
+            "👁️ Ver detalle", disabled=tabla_selected is None, key="ver_detalle_tabla"
+        ):
+            st.session_state["view_account_id_tabla"] = tabla_selected["ID"] if tabla_selected else None
         if not filtered.empty:
             st.markdown("<div style='height:0.8rem;'></div>", unsafe_allow_html=True)
             export_buttons(filtered, key="export_tabla")
 
-    if view_id:
-        matches = df[df["ID"].astype(str) == str(view_id)]
+    view_id_tabla = st.session_state.get("view_account_id_tabla")
+    if view_id_tabla:
+        matches = df[df["ID"].astype(str) == str(view_id_tabla)]
         if not matches.empty:
-            account_detail_modal(matches.iloc[0].to_dict())
+            account_detail_modal(matches.iloc[0].to_dict(), session_key="view_account_id_tabla")
+        else:
+            st.session_state["view_account_id_tabla"] = None
