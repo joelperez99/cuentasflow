@@ -44,7 +44,7 @@ def render_accounts_table(df: pd.DataFrame, key: str = "accounts_grid") -> dict:
     builder = GridOptionsBuilder.from_dataframe(display_df)
     builder.configure_default_column(resizable=True, sortable=True, filter=True, editable=False, wrapText=False)
     builder.configure_selection(selection_mode="single", use_checkbox=False)
-    builder.configure_pagination(paginated=True, paginationAutoPageSize=False, paginationPageSize=12)
+    builder.configure_pagination(enabled=True, paginationAutoPageSize=False, paginationPageSize=12)
     builder.configure_column("_edit_trigger", hide=True)
     builder.configure_column("ID", pinned="left", width=100)
     builder.configure_grid_options(onRowDoubleClicked=DOUBLE_CLICK_JS, domLayout="normal")
