@@ -26,14 +26,15 @@ def inject_global_styles() -> None:
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
         }}
 
-        /* Oculta el chrome nativo de Streamlit, pero conserva la flecha
-           para abrir/cerrar la sidebar (vive dentro del header). */
+        /* Oculta el chrome nativo de Streamlit, pero conserva el boton para
+           abrir/cerrar la sidebar (vive dentro de stToolbar/header). */
         #MainMenu {{visibility: hidden;}}
         footer {{visibility: hidden;}}
         header {{background: transparent !important; box-shadow: none !important;}}
-        [data-testid="stToolbar"] {{visibility: hidden; height: 0;}}
         [data-testid="stDecoration"] {{display: none;}}
         [data-testid="stStatusWidget"] {{display: none;}}
+        [data-testid="stAppDeployButton"] {{display: none;}}
+        [data-testid="stMainMenu"] {{display: none;}}
 
         .stApp {{
             background-color: {COLOR_BG};
